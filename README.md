@@ -20,7 +20,7 @@ Eglot is a lightweight and elegant client for Language Server Protocol (LSP), bu
 
 - 🔄 Dynamically chooses the correct LSP for a file based on project structure
 - 🧠 Supports multiple major modes per strategy
-- 🔁 Automatically runs **multiple LSPs per buffer** via [lspx](https://github.com/zevlg/lspx)
+- 🔁 Automatically runs **multiple LSPs per buffer** via [lspx](https://github.com/thefrontside/lspx)
 - 🔍 Supports `:initializationOptions`, `:command`, and other extended configuration options
 - 💡 Clean, declarative interface designed for scalability and reuse
 
@@ -97,7 +97,7 @@ Then in your Emacs configuration:
 
 ### 🔁 Multiplexing with `lspx`
 
-If your command function returns **multiple command lists**, `eglot-strategies` automatically invokes [lspx](https://github.com/zevlg/lspx) to run them in parallel:
+If your command function returns **multiple command lists**, `eglot-strategies` automatically invokes [lspx](https://github.com/thefrontside/lspx) to run them in parallel:
 
 ```elisp
 :command (lambda (_root)
