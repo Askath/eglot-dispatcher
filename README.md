@@ -31,14 +31,14 @@ Eglot is a lightweight and elegant client for Language Server Protocol (LSP), bu
 Clone the repo into your `load-path`:
 
 ```sh
-git clone https://github.com/yourname/eglot-strategies ~/emacs.d/lisp/eglot-strategies
+git clone https://github.com/Askath/eglot-strategies ~/emacs.d/lisp/eglot-dispatcher
 ```
 
 Then in your Emacs configuration:
 
 ```elisp
-(add-to-list 'load-path "~/emacs.d/lisp/eglot-strategies")
-(require 'eglot-strategies)
+(add-to-list 'load-path "~/emacs.d/lisp/eglot-dispatcher")
+(require 'eglot-dispatcher)
 ```
 
 ---
@@ -48,8 +48,8 @@ Then in your Emacs configuration:
 #### Hook it into relevant modes
 
 ```elisp
-(add-hook 'typescript-ts-mode-hook #'eglot-strategies-dispatch)
-(add-hook 'html-ts-mode-hook #'eglot-strategies-dispatch)
+(add-hook 'typescript-ts-mode-hook #'eglot-dispatcher-dispatch)
+(add-hook 'html-ts-mode-hook #'eglot-dispatcher-dispatch)
 ```
 
 #### Define your LSP strategies
@@ -97,7 +97,7 @@ Then in your Emacs configuration:
 
 ### 🔁 Multiplexing with `lspx`
 
-If your command function returns **multiple command lists**, `eglot-strategies` automatically invokes [lspx](https://github.com/thefrontside/lspx) to run them in parallel:
+If your command function returns **multiple command lists**, `eglot-dispatcher` automatically invokes [lspx](https://github.com/thefrontside/lspx) to run them in parallel:
 
 ```elisp
 :command (lambda (_root)
