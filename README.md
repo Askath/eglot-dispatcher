@@ -1,6 +1,6 @@
 ## `eglot-dispatcher`
 
-**A dynamic, project-aware LSP dispatcher for [Eglot](https://github.com/joaotavora/eglot)**, designed to support multiple language server configurations for the *same major mode* — including simultaneous LSPs via `lspx`.
+**A dynamic, project-aware LSP dispatcher for [Eglot](https://github.com/joaotavora/eglot)**, designed to support multiple language server configurations for the *same major mode* — including simultaneous LSPs via [LSPX](https://github.com/thefrontside/lspx).
 
 ---
 
