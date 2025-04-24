@@ -12,7 +12,7 @@ Eglot is a lightweight and elegant client for Language Server Protocol (LSP), bu
 - Running **multiple LSPs simultaneously** for the same buffer (e.g., a language server plus a linter)
 - Project-specific configurations that vary based on files like `angular.json`, `package.json`, or `vite.config.ts`
 
-`eglot-strategies` solves this by letting you define a **declarative list of strategies** that determine which LSP(s) to launch based on file type and project context — all without modifying `eglot` itself.
+`eglot-dispatcher` solves this by letting you define a **declarative list of strategies** that determine which LSP(s) to launch based on file type and project context — all without modifying `eglot` itself.
 
 ---
 
@@ -31,7 +31,7 @@ Eglot is a lightweight and elegant client for Language Server Protocol (LSP), bu
 Clone the repo into your `load-path`:
 
 ```sh
-git clone https://github.com/Askath/eglot-strategies ~/emacs.d/lisp/eglot-dispatcher
+git clone https://github.com/Askath/eglot-dispatcher ~/emacs.d/lisp/eglot-dispatcher
 ```
 
 Then in your Emacs configuration:
