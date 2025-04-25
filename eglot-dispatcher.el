@@ -1,4 +1,4 @@
-;;; eglot-strategies.el --- Declarative LSP strategy dispatcher for Eglot -*- lexical-binding: t; -*-
+;;; eglot-dispatcher.el --- Declarative LSP strategy dispatcher for Eglot -*- lexical-binding: t; -*-
 
 ;; Author: Your Name <your@email.com>
 ;; Version: 0.1
@@ -56,10 +56,11 @@
 
 (defun eglot-dispatcher--wrap-lspx (commands)
   "Wrap multiple COMMANDS in a single `lspx` invocation."
-  (apply #'append '("lspx")
-         (cl-mapcan (lambda (cmd)
-                      (list "--lsp" (mapconcat #'identity cmd " ")))
-                    commands)))
+  (append '("lspx")
+          (cl-mapcan (lambda (cmd)
+                       `("--lsp" ,(mapconcat #'identity cmd " ")))
+                     commands)))
+
 
 ;;;###autoload
 (defun eglot-dispatcher-dispatch ()
@@ -67,35 +68,36 @@
   (unless (eglot-managed-p)
     (let ((current-mode major-mode)
           (matched nil))
-      (dolist (strategy eglot-strategies-list)
-        (let ((modes (plist-get strategy :modes)))
-          (when (member current-mode modes)
-            (let* ((rootfile (plist-get strategy :project-root))
-                   (root (cond
-                          (rootfile (locate-dominating-file default-directory rootfile))
-                          ((project-current) (project-root (project-current)))
-                          (t nil)))
-                   (extra-pred (plist-get strategy :predicate)))
-              (when (and root (or (null extra-pred)
-                                  (funcall extra-pred root)))
-                (let* ((cmd-fn (plist-get strategy :command))
-                       (cmds (funcall cmd-fn root))
-                       (wrapped-cmd (if (and (listp cmds)
-                                             (listp (car cmds))) ;; multiple commands
-                                        (eglot-dispacher--wrap-lspx cmds)
-                                      cmds)))
-                  (setq-local eglot-server-programs
-                              `(((,current-mode) . ,(if (keywordp (car wrapped-cmd))
-                                                        wrapped-cmd
-                                                      `(:command ,wrapped-cmd)))))
-                  (message "eglot-strategies: Using strategy: %s (%s)"
-                           (plist-get strategy :name)
-                           (if (listp (car cmds)) "lspx" "single LSP"))
-                  (setq matched t)
-                  (eglot-ensure))
-                (cl-return))))))
+      (cl-block 'eglot-strategy-match
+        (dolist (strategy eglot-strategies-list)
+          (let ((modes (plist-get strategy :modes)))
+            (when (member current-mode modes)
+              (let* ((rootfile (plist-get strategy :project-root))
+                     (root (cond
+                            (rootfile (locate-dominating-file default-directory rootfile))
+                            ((project-current) (project-root (project-current)))
+                            (t nil)))
+                     (extra-pred (plist-get strategy :predicate)))
+                (when (and root (or (null extra-pred)
+                                    (funcall extra-pred root)))
+                  (let* ((cmd-fn (plist-get strategy :command))
+                         (cmds (funcall cmd-fn root))
+                         (command (if (and (listp cmds)
+                                           (listp (car cmds)))
+                                      (eglot-dispatcher--wrap-lspx cmds)
+                                    cmds)))
+                    (message "eglot-dispatcher: Using strategy: %s (%s)"
+                             (plist-get strategy :name)
+                             (if (listp (car cmds)) "lspx" "single LSP"))
+                    (message "eglot-dispatcher: Final command: %S" command)
+                    (setq-local eglot-server-programs
+                                `(((,current-mode) . ,command)))
+                    (setq matched t)
+                    (eglot-ensure))
+                  (cl-return-from 'eglot-strategy-match)))))))
       (unless matched
-        (message "eglot-strategies: No strategy matched.")))))
+        (message "eglot-dispatcher: No strategy matched.")))))
+
 
 (provide 'eglot-dispatcher)
-;;; eglot-dispatcher=.el ends here
+;;; eglot-dispatcher.el ends here
